@@ -1,9 +1,14 @@
 const express  = require("express")
 const { connectdb } = require("./config/db");
 const { UserModel } = require("./models/user.model");
+const cors = require ("cors")
 
 const app = express()
+
 app.use(express.json())
+app.use(cors({
+     origin: "http://localhost:5173",
+}))
 
 connectdb();
 
@@ -32,12 +37,13 @@ app.post("/users" , async (req , res)=>{
     })
 
 })
+// ----------------------------------------Read------------------------------------------
 
-app.get("/us/email/:email" , async (req,res)=>{
+app.get("/us" , async (req,res)=>{
     try {
-         let {email} = req.params
+        
 
-        let person = await UserModel.findOne({email});
+        let person = await UserModel.find();
 
         if(!person){
             return res.send ("nhi mila kuch bhi")
@@ -54,6 +60,50 @@ app.get("/us/email/:email" , async (req,res)=>{
         })
     }
 })
+
+// ----------------------------------------Update------------------------------------
+
+app.put("/up/update/:id" , async (req,res)=>{
+
+    let {id} = req.params;
+    if(!id){
+        return res.send("id not found");
+    }
+    let {name , password ,email} = req.body;
+
+    let updated = await UserModel.findByIdAndUpdate(id , {
+       name,
+       password,
+       email
+    },
+    {
+        new:true
+    }   
+)
+
+res.json({
+        message:"updated succesfully",
+        updated
+    })
+})
+
+
+// ----------------------------------------------delete----------------------------------------------
+
+app.delete("/del/delete/:id" , async (req,res)=>{
+    let {id} =req.params;
+    if(!id){
+       return res.send("id not found")
+    }
+
+    await UserModel.findByIdAndDelete(id)
+
+    return res.json({
+        message:"item dleted",
+
+    })
+})
+
 
 app.listen(3000 , ()=>{
     console.log("server is running on port 3000")
