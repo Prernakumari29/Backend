@@ -1,13 +1,19 @@
 const express  = require("express")
 const { connectdb } = require("./config/db");
 const { UserModel } = require("./models/user.model");
-const cors = require ("cors")
+const cors = require ("cors");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
+
 
 const app = express()
 
 app.use(express.json())
+app.use(cookieParser())
 app.use(cors({
      origin: "http://localhost:5173",
+     credentials:true,
 }))
 
 connectdb();
@@ -21,15 +27,24 @@ app.post("/users" , async (req , res)=>{
         })
     }
 
-     
+     const hashedPassword = await bcrypt.hash(password , 10)
+     console.log(hashedPassword)
 
     // ---------------------------create------------------------------
 
    let user = await UserModel.create({
         name,
-        password,
+        password:hashedPassword,
         email,
     })
+
+    let token = jwt.sign({id:user._id} , "SThURR0fqirPJ45Zx2KlQ8aNKMlMhVXuKYU3TxSkjrJ" , 
+        {
+          expiresIn: "1h",  
+        })
+
+        res.cookie("token" , token)
+    
 
     return res.json({
         message:"user data fetched",
