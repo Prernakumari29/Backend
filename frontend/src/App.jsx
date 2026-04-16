@@ -30,7 +30,7 @@ const App = () => {
   const handlesubmit = async (e)=>{
       e.preventDefault();
       console.log(formData)
-      let res = await axios.post("http://localhost:3000/users" , formData)
+      let res = await axios.post("http://localhost:3000/users" , formData , {withCredentials:true})
       console.log(res)
       
 

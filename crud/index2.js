@@ -32,18 +32,18 @@ app.post("/users" , async (req , res)=>{
 
     // ---------------------------create------------------------------
 
-   let user = await UserModel.create({
+    let user = await UserModel.create({
         name,
-        password:hashedPassword,
+        password : hashedPassword,
         email,
     })
 
-    let token = jwt.sign({id:user._id} , "SThURR0fqirPJ45Zx2KlQ8aNKMlMhVXuKYU3TxSkjrJ" , 
+    let token = jwt.sign({id:user._id} , "lgeC3qGPls0GhicX3bjSbt0GmuvIwwIl9biZTXvcAr9" , 
         {
-          expiresIn: "1h",  
+          expiresIn: "1m",  
         })
 
-        res.cookie("token" , token)
+        res.cookie("practiceToken" , token)
     
 
     return res.json({
