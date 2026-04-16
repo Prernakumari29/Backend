@@ -1,3 +1,7 @@
+const dotenv = require("dotenv")
+dotenv.config();
+
+
 const express = require("express");
 const { connectdb } = require("./config/db");
 const { UserModel } = require("./models/user.model");
@@ -15,10 +19,11 @@ app.use(cors({
 
 connectdb();
 
+// --------------------------------------------------------------Register----------------------
 app.post("/register" , async (req , res)=>{
-   let {name , password , number} = req.body
+   let {name , password , email ,  number} = req.body
 
-   if(!name || !password || !number){
+   if(!name || !password || !email || !number){
     return res.send("all fields are required")
    }
    
@@ -30,11 +35,12 @@ app.post("/register" , async (req , res)=>{
 const registered = await UserModel.create({
     name,
     password:hashedpassword,
+    email,
     number
 })
 // ----------------------- creating token------------------------------
 const token = jwt.sign({id:registered._id} , 
-    "VlGUpG75cdvh5AQGlnxVWc6VmJtR1lDqi8lkEjDnxBR",
+    process.env.JWT_SECRET_KEY,
     { expiresIn : "1m"}
 )
 
@@ -46,6 +52,39 @@ res.json({
     registered,
 })
 
+})
+
+
+// ----------------------------------------------------------------Login----------------------
+app.post("/login" , async (req ,res) =>{
+    let{password , email} = req.body
+    if(!password || !email){
+        return res.json("Invalid credentials")
+    }
+    
+    let isExisted = await UserModel.findOne({email})
+    if(!isExisted){
+        return res.json({
+            message:"User not found"
+        })
+    }
+
+    let haspassword = await bcrypt.compare(password , isExisted.password)
+    if(!haspassword){
+       return res.json({
+            message:"Invalid Credentials"
+        })
+    }
+
+    let token = jwt.sign({id:isExisted._id} , process.env.JWT_SECRET_KEY , 
+        {expiresIn : "1m"}
+    )
+    res.cookie("token" , token)
+
+    return res.json({
+        message: "User founded",
+        isExisted
+    })
 })
 
 // -----------------------------------------Read----------------------------------------
