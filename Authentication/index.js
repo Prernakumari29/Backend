@@ -8,7 +8,8 @@ const { UserModel } = require("./models/user.model");
 const cors = require("cors")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
-const cookieParser = require("cookie-parser")
+const cookieParser = require("cookie-parser");
+const { authMiddleWare } = require("./middleware/authMiddleWare");
 
 const app = express();
 app.use(express.json())
@@ -16,6 +17,7 @@ app.use(cors({
     origin:"http://localhost:5173",
     credentials:true
 }))
+app.use(cookieParser())
 
 connectdb();
 
@@ -44,7 +46,7 @@ const token = jwt.sign({id:registered._id} ,
     { expiresIn : "1m"}
 )
 
-res.cookie("auth-token" , token)
+res.cookie("token" , token)
 
 
 res.json({
@@ -84,6 +86,14 @@ app.post("/login" , async (req ,res) =>{
     return res.json({
         message: "User founded",
         isExisted
+    })
+})
+
+// --------------------------------------------Me api ------------------------------------------------
+app.get("/me" , authMiddleWare , (req,res)=>{
+    return res.status(200).json({
+        message: "Logged in user",
+        user : req.user
     })
 })
 
