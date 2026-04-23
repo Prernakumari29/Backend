@@ -1,4 +1,5 @@
 const { UserModel } = require("../module/user.module");
+const jwt = require("jsonwebtoken")
 
 
 const productController =  async (req , res)=>{
@@ -15,10 +16,9 @@ const productController =  async (req , res)=>{
     ptitle,
     description,
     price,
-    category
-    
+    category  
    })
-   
+
 
    return res.json({
     message : "User Found" ,

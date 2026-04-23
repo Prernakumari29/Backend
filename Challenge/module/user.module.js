@@ -11,7 +11,8 @@ const usermode = new mongoose.Schema({
     category:{
         type:String,
         enum: ["women" , "men" , "kids" , "unisex"]
-    }
+    },
+    
 
 
 })
