@@ -4,8 +4,8 @@ const adminMiddleware = async (req , res, next)=>{
         let user = req.user
 
         if(!user.isAdmin){
-            return res.status(401).json({
-                message:"you are not authorized User"
+            return res.status(403).json({
+                message:"Admin Only access"
             })
         }
 

@@ -8,8 +8,6 @@ const { connectdb } = require("./config/db")
 const proRoute = require("./routes/product.route")
 const authrouter = require("./routes/auth.route");
 const cookieParser = require("cookie-parser");
-const authMiddleware = require("./middleware/authMiddleware");
-const adminMiddleware = require("./middleware/adminMiddleware");
 
 
 
@@ -21,7 +19,7 @@ app.use(cookieParser())
 
 connectdb()
 
-app.use("/api/pro"  ,authMiddleware , adminMiddleware , proRoute )
+app.use("/api/pro"  , proRoute )
 app.use("/api/auth" , authrouter )
 
 
