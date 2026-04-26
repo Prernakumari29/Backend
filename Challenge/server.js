@@ -17,6 +17,9 @@ const app = express ()
 app.use(express.json())
 app.use(cookieParser())
 
+// ----------------------body parser-------------------------------
+app.use(express.urlencoded({extended:true}))
+
 connectdb()
 
 app.use("/api/pro"  , proRoute )
