@@ -27,4 +27,14 @@ const productController =  async (req , res)=>{
    
 }
 
-module.exports = {productController};
+const multerController =   (req,res)=>{
+    {
+    let data = req.files
+    console.log(data)
+    res.send("image received")
+
+}
+
+}
+
+module.exports = {productController , multerController};
