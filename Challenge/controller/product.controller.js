@@ -29,7 +29,7 @@ const productController =  async (req , res)=>{
 
 const multerController =   (req,res)=>{
     {
-    let data = req.files
+    let data = req.file
     console.log(data)
     res.send("image received")
 

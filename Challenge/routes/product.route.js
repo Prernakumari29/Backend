@@ -8,6 +8,6 @@ const router = express.Router();
 
 router.post("/product" ,authMiddleware, adminMiddleware ,productController)
 
-router.post("/get-image" , upload.array("images" , 2 ) , multerController)
+router.post("/get-image" , upload.single("image" ) , multerController)
 
 module.exports = router;
