@@ -8,11 +8,24 @@ const registerUser = async(req,res)=>{
     const otp = Math.floor(1000 + Math.random()*9000)
     const expiresAt = Date.now() + 1 * 60 * 1000
 
-    await OtpModel.create({
-        email,
-        otp,
-        expiresAt
-    })
+     await OtpModel.findOneAndUpdate(
+        { email },
+        {
+            otp,
+            expiresAt
+        },
+        {
+            upsert: true,
+            new: true
+        }
+    );
+
+
+    // await OtpModel.create({
+    //     email,
+    //     otp,
+    //     expiresAt
+    // })
 
     // -------------------------------sent email------------------------
     await sendEmailTo(
@@ -37,6 +50,7 @@ const verifyOtp =  async (req , res)=>{
     }
 
     if(Date.now() > data.expiresAt){
+        await OtpModel.findOneAndDelete({email})
        return res.send("otp expired")
     }
 
