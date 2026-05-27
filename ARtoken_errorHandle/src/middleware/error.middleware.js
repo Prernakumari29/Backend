@@ -3,7 +3,7 @@ let errorMiddleware = (err, req,res, next)=>{
     let message = err.message || "Internal server error";
     let statusCode = err.statusCode || 500;
 
-    return res.statusCode(statusCode).json({
+    return res.status(statusCode).json({
         message,
         success:false
     });

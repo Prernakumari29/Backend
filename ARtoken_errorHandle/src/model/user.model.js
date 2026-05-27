@@ -18,6 +18,9 @@ const UserSchema = new mongoose.Schema({
     provider_id: {
       type: String,
     },
+    refreshToken:{
+        type:String,
+    }
 },
 {
     timestamps:true,

@@ -3,28 +3,28 @@ const bcrypt = require("bcrypt")
 const ApiError = require("../utils/apiError")
 const ApiResponse = require("../utils/apiResponse")
 const asynchandler = require("../utils/asyncHandler")
+const {registerService , loginService, getAccessToken} = require("../services/auth.service")
 
 const registerController = asynchandler(async (req, res)=>{
    
 
-        let {name , password , email} = req.body
+        let {accessToken,refreshToken,newUser} = await registerService(req.body)
 
-        if(!password || !email){
-            throw new ApiError(400 , "all fields are required")
-        }
-
-        let isexisted = await UserModel.findOne({email})
-        if(isexisted){
-           throw new ApiError(409 , "User already existed")
-        }
-
-        let hashpass = await bcrypt.hash(password , 10)
-
-        let newUser = await UserModel.create({
-            name,
-            password:hashpass,
-            email
+        res.cookie("accesstoken" , accessToken, {
+            httpOnly:true,
+            sameSite:"lax",
+            secure:false,
+            maxAge:15*60*1000,
         })
+
+        res.cookie("refreshToken" , refreshToken , {
+            httpOnly:true,
+            sameSite:"lax",
+            secure:false,
+            maxAge: 24 * 60 * 60 * 1000,
+        })
+
+        
 
         return res
         .status(201)
@@ -34,4 +34,48 @@ const registerController = asynchandler(async (req, res)=>{
      
 })
 
-module.exports = registerController
+const loginController = asynchandler(async(req , res) =>{
+
+    let {accessToken ,refreshToken , isExisted} = await loginService(req.body);
+
+     res.cookie("accesstoken" , accessToken, {
+            httpOnly:true,
+            sameSite:"lax",
+            secure:false,
+            maxAge:15*60*1000,
+        })
+
+        res.cookie("refreshToken" , refreshToken , {
+            httpOnly:true,
+            sameSite:"lax",
+            secure:false,
+            maxAge: 24 * 60 * 60 * 1000,
+        })
+
+        
+
+        return res
+        .status(200)
+        .json(new ApiResponse("user login successfully", isExisted))
+
+})
+
+
+const getAccessTokenController = asynchandler(async(req , res) => {
+    let refreshToken = req.cookies.refreshToken;
+
+    let accessToken = await getAccessToken(refreshToken)
+
+    res.cookie("accesstoken" , accessToken, {
+            httpOnly:true,
+            sameSite:"lax",
+            secure:false,
+            maxAge:15*60*1000,
+        })
+
+        return res
+        .status(200)
+        .json(new ApiResponse("acess token generated"))
+})
+
+module.exports = {registerController , loginController , getAccessTokenController}
