@@ -3,8 +3,11 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { LoginUser } from "../../api/LoginAPi";
 import { setUser } from "../../features/AuthSlice";
+import { useNavigate } from "react-router";
 
 const Login = ({ setToggle }) => {
+  
+  const navigate = useNavigate()
 
   const [email , setEmail] = useState("")
   const [password , setPassword] = useState("")
@@ -21,6 +24,7 @@ const Login = ({ setToggle }) => {
       alert(res.message)
       console.log(res)
       dispatch(setUser(res.data))
+      navigate("/home")
 
     } catch (error) {
       console.error("error in login api" , error)
@@ -59,7 +63,7 @@ const Login = ({ setToggle }) => {
           />
 
           <button
-            className="bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300"
+            className="bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300" onClick={()=>navigate("/home")}
           >
             Login
           </button>
