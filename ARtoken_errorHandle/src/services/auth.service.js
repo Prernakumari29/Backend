@@ -74,11 +74,12 @@ let getAccessToken = async(refreshToken)=>{
 
     if(refreshToken !== user.refreshToken) {
         throw new ApiError(401 , "unauthorized request")
+    }
 
         let accessToken = generateAccessToken(user._id);
 
         return accessToken
-    }
+    
 
 }
 

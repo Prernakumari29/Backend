@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { currentuser } from "./AuthAction";
 
 const initialState = {
     user : null ,
@@ -12,18 +13,25 @@ const authSlice = createSlice({
             state.user = action.payload
             state.loading = false
         },
-        clearUser: (state) => {
+    },
+    extraReducers:(builder)=>{
+        builder
+        .addCase(currentuser.pending, (state)=>{
+          state.loading = true;
+        })
+        .addCase(currentuser.fulfilled , (state, action) =>{
+            state.user = action.payload;
+            state.loading = false;
+        })
+        .addCase(currentuser.rejected , (state)=>{
+            state.user = null;
+            state.loading = false;
 
-            state.user = null
+        })
 
-            state.loading = false
-        }
-
-
- 
     }
     })
 
-    export const {setUser , clearUser} = authSlice.actions
+    export const {setUser } = authSlice.actions
 
     export default authSlice.reducer
