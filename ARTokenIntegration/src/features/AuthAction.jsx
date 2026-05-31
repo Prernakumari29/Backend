@@ -8,5 +8,4 @@ export let currentuser = createAsyncThunk("auth/me" , async (_ , thunkapi)=>{
     } catch (error) {
         return thunkapi.rejectWithValue(error)
     }
-
-} )
+})

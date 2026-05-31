@@ -22,7 +22,7 @@ api.interceptors.response.use(
                 return api(originalreq);
                 
             } catch (error) {
-                window.location.href = '/';
+                // window.location.href = '/';
                 return Promise.reject(error);
                 
             }

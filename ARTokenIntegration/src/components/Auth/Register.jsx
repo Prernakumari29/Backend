@@ -1,6 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
+import api from "../../api/AxiosInstance";
 
 const Register = ({ setToggle }) => {
+
+  const[name , setName] = useState("")
+  const[email , setEmail] = useState("")
+  const[password , setPassword] = useState("")
+
+  const HandleRegister = async(e)=>{
+    e.preventDefault()
+    try {
+      const res = await api.post("/register" , {name ,  password , email})
+      alert(res.data.message)
+      console.log(res)
+      setToggle(true)
+      
+    } catch (error) {
+      console.log("error in register api" , error)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
 
@@ -12,23 +31,29 @@ const Register = ({ setToggle }) => {
         </h1>
 
         {/* Form */}
-        <form className="flex flex-col gap-4">
+        <form onSubmit={HandleRegister} className="flex flex-col gap-4">
 
           <input
             type="text"
             placeholder="Enter your name"
+            value={name}
+            onChange={(e)=>setName(e.target.value)}
             className="border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-500"
           />
 
           <input
             type="email"
             placeholder="Enter your email"
+            value={email}
+            onChange={(e)=>setEmail(e.target.value)}
             className="border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-500"
           />
 
           <input
             type="password"
             placeholder="Create password"
+            value={password}
+            onChange={(e=>setPassword(e.target.value))}
             className="border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-500"
           />
 
