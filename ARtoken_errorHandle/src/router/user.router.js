@@ -1,5 +1,5 @@
 const express = require("express");
-const {registerController , loginController, getAccessTokenController} = require("../controller/user.controller");
+const {registerController , loginController, getAccessTokenController , logOutController} = require("../controller/user.controller");
 const ApiResponse = require("../utils/apiResponse");
 let authMiddleware = require("../middleware/auth.middleware")
 
@@ -14,6 +14,7 @@ router.get("/me" , authMiddleware ,(req,res)=>{
 router.post("/register" , registerController)
 router.post("/login" , loginController )
 router.get("/getAccessToken" , getAccessTokenController)
+router.post("/logout" , authMiddleware , logOutController)
 
 
 module.exports = router;

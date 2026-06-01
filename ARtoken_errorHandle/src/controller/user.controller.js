@@ -78,4 +78,17 @@ const getAccessTokenController = asynchandler(async(req , res) => {
         .json(new ApiResponse("acess token generated"))
 })
 
-module.exports = {registerController , loginController , getAccessTokenController}
+const logOutController = asynchandler( async(req,res)=>{
+    await UserModel.findByIdAndUpdate(req.user.id , {refreshToken:null})
+
+    res.clearCookie("accesstoken")
+    res.clearCookie("refreshToken")
+
+   return res
+   .status(200)
+   .json(new ApiResponse("logOut Successfully"))
+
+
+})
+
+module.exports = {registerController , loginController , getAccessTokenController , logOutController}
