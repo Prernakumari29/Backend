@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken")
 const { UserModel } = require("../models/user.model")
+const cacheInstance = require("../config/cacheInstance")
 
 let authMiddleWare = async(req,res ,next)=>{
     try {
@@ -8,6 +9,14 @@ let authMiddleWare = async(req,res ,next)=>{
     if(!token){
         return res.status(404).json({
             message : "token not found"
+        })
+    }
+
+    let isblacklisted = await cacheInstance.get(token);
+
+    if(isblacklisted){
+        return res.status(401).json({
+            message:"mt kr laadle"
         })
     }
 

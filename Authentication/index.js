@@ -10,6 +10,7 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const cookieParser = require("cookie-parser");
 const { authMiddleWare } = require("./middleware/authMiddleWare");
+const cacheInstance = require("./config/cacheInstance");
 
 const app = express();
 app.use(express.json())
@@ -20,6 +21,14 @@ app.use(cors({
 app.use(cookieParser())
 
 connectdb();
+
+cacheInstance.on("connect" , ()=>{
+    console.log("redis connected")
+})
+
+cacheInstance.on("error" , (error)=>{
+    console.log("error in redis" , error)
+})
 
 // --------------------------------------------------------------Register----------------------
 app.post("/register" , async (req , res)=>{
@@ -43,7 +52,7 @@ const registered = await UserModel.create({
 // ----------------------- creating token------------------------------
 const token = jwt.sign({id:registered._id} , 
     process.env.JWT_SECRET_KEY,
-    { expiresIn : "1m"}
+    { expiresIn : "10m"}
 )
 
 res.cookie("token" , token)
@@ -79,7 +88,7 @@ app.post("/login" , async (req ,res) =>{
     }
 
     let token = jwt.sign({id:isExisted._id} , process.env.JWT_SECRET_KEY , 
-        {expiresIn : "1m"}
+        {expiresIn : "10m"}
     )
     res.cookie("token" , token)
 
@@ -110,6 +119,23 @@ app.get("/getting" , async(req ,res)=>{
     users,
   })
 
+})
+
+
+app.get("/home" , authMiddleWare , (req,res)=>{
+    res.status(200).json({
+        message:"succesfully entered in the home"
+    })
+})
+
+app.post("/logout" , authMiddleWare , async(req,res)=>{
+
+    let token = req.cookies.token
+
+    await cacheInstance.set(token , "blacklisted" , "Ex",5000)
+    res.clearCookie("token")
+
+    return res.send("logout successfully")
 })
 
 app.listen(3000 , ()=>{
