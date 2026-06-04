@@ -3,7 +3,10 @@ const connected = require("./config/db");
 const UserModel = require("./models/user.model");
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
-const cookieParser = require("cookie-parser")
+const cookieParser = require("cookie-parser");
+const DonerModel = require("./models/Doner.model");
+const authmiddleware = require("./middleware/auth.middleware");
+const authorizerole = require("./middleware/roleMiddleware");
 
 const app = express();
 app.use(express.json())
@@ -49,6 +52,8 @@ app.post("/register" , async(req ,res)=>{
 
 })
 
+// ---------------------------------------------------------------login------------------------------------------------------------------
+
 app.post("/login" , async(req,res) =>{
     let {email , password} = req.body;
 
@@ -73,6 +78,26 @@ app.post("/login" , async(req,res) =>{
     return res.status(200).json({
       message: "Login Successful",
     })
+})
+
+
+// ---------------------------------------------------------------------Donation--------------------------------------------------------
+
+app.post("/donate" , authmiddleware , authorizerole("user") , async(req,res)=>{
+    let {foodName , quantity , description , pickUpAddress } = req.body
+
+    const donation = await DonerModel.create({
+        foodName,
+        quantity,
+        description,
+        pickUpAddress,
+        doner:req.user.id
+    })
+
+    return res.status(201).json({
+        message:"donation  created succesfully"
+    })
+
 })
 
 

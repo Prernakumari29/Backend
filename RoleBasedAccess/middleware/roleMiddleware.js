@@ -8,3 +8,5 @@ const authorizerole = (...roles)=>{
         next();
     }
 }
+
+module.exports = authorizerole;
