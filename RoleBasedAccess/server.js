@@ -84,18 +84,63 @@ app.post("/login" , async(req,res) =>{
 // ---------------------------------------------------------------------Donation--------------------------------------------------------
 
 app.post("/donate" , authmiddleware , authorizerole("user") , async(req,res)=>{
-    let {foodName , quantity , description , pickUpAddress } = req.body
+    let {foodName , quantity , description , pickUpAddress , status } = req.body
 
     const donation = await DonerModel.create({
         foodName,
         quantity,
         description,
         pickUpAddress,
+        status,
         doner:req.user.id
     })
 
     return res.status(201).json({
         message:"donation  created succesfully"
+    })
+})
+
+// -----------------------------------------------------getAvailableDonation-------------------------------------------------
+
+app.get("/getAvailableDonation" , authmiddleware , authorizerole("ngo") , async(req ,res)=>{
+
+    const donations = await DonerModel.find({ status:"available"}).populate("doner")
+
+    return res.status(200).json({
+        donations
+    })
+
+})
+
+// ----------------------------------------------------claim DOnation-------------------------------------------------------------
+
+app.patch("/claim/:id" , authmiddleware , authorizerole("ngo") , async(req,res)=>{
+
+    const donationId = req.params.id
+
+    const donation = await DonerModel.findById(donationId)
+
+    if(!donation){
+       return res.status(404).json({
+            message:"item not found"
+        })
+    }
+
+    if(donation.status !== "available"){
+        return res.status(400).json({
+            message:"item already claimed"
+        })
+    }
+
+    donation.status = "claimed"
+
+    donation.claimBy = req.user.id
+
+    await donation.save()
+
+    return res.status(200).json({
+         message:"donation claimed successfully",
+         donation
     })
 
 })

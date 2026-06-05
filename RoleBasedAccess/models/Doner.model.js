@@ -25,7 +25,11 @@ const donerSchema = new mongoose.Schema({
     type:mongoose.Schema.Types.ObjectId,
     ref:"user",
     required:true
-   }
+   },
+   claimeBy:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"user"       
+    },
 },{timestamps:true})
 
 const DonerModel = mongoose.model("doner" , donerSchema)
