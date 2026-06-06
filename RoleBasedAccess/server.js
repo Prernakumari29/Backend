@@ -7,10 +7,15 @@ const cookieParser = require("cookie-parser");
 const DonerModel = require("./models/Doner.model");
 const authmiddleware = require("./middleware/auth.middleware");
 const authorizerole = require("./middleware/roleMiddleware");
+const cors = require("cors")
 
 const app = express();
 app.use(express.json())
 app.use(cookieParser())
+app.use(cors({
+    origin:"http://localhost:5173",
+    credentials:true
+}))
 
 connected();
 
@@ -77,6 +82,7 @@ app.post("/login" , async(req,res) =>{
 
     return res.status(200).json({
       message: "Login Successful",
+      existed
     })
 })
 

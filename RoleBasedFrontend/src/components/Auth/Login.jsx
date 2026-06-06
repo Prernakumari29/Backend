@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react";
 
 const Login = ({ setToggle }) => {
@@ -13,12 +14,18 @@ const Login = ({ setToggle }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
 
     console.log(formData);
 
-    // API call here
+    try {
+      const res = await axios.post("http://localhost:3000/login" , formData , {withCredentials:true})
+      alert(res.data.message)
+      console.log(res.data)
+    } catch (error) {
+      console.loh("error in login api" , error)
+    }
   };
 
   return (
